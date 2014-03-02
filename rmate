@@ -85,6 +85,7 @@ if [[ "$host" = "auto" && "$SSH_CONNECTION" != "" ]]; then
 fi
 
 # misc initialization
+backup=false
 filepath=""
 selection=""
 displayname=""
@@ -96,8 +97,9 @@ force=false
 # process command-line parameters
 #
 function showusage {
-    echo "usage: $0 [-H host-name] [-p port-number] [-w] [-l line-number] [-m display-name] [-t file-type] [-f] [-v] file-path
+    echo "usage: $0 [-b] [-H host-name] [-p port-number] [-w] [-l line-number] [-m display-name] [-t file-type] [-f] [-v] file-path
 
+-b  make backup file on save (like Emacs)
 -H  connect to host (default: $host)
 -p  port number to use for connection (default: $port)
 -w  wait for file to be closed by TextMate
@@ -137,8 +139,10 @@ function canonicalize {
     echo $result
 }
 
-while getopts H:p:wl:m:t:fvh OPTIONS; do
+while getopts bH:p:wl:m:t:fvh OPTIONS; do
     case $OPTIONS in
+        b)
+            backup=true;;
         H)
             host=$OPTARG;;
         p)
@@ -249,6 +253,7 @@ function handle_connection {
         elif [[ "$cmd" = "save" ]]; then
             log "Saving $token"
 
+            $backup && mv "${token}" "${token}~"
             cat "$tmp" >  "$token"
             if [[ $(( $filesize / $(ls -lL "$realpath" | awk '{print $5}') )) < 0.50 ]]; then
                 log "WARNING: Saved file is less than 50% of original!"

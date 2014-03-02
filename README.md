@@ -52,6 +52,7 @@ _rmate_ takes a file as last argument. This argument is always required.
 
 ### Optional parameters
 
+    -b  make backup file on save (like Emacs)
     -H  connect to host (default: localhost)
     -p  port number to use for connection (default: 52698)
     -w  wait for file to be closed by TextMate
