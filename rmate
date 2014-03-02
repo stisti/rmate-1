@@ -250,6 +250,9 @@ function handle_connection {
             log "Saving $token"
 
             cat "$tmp" >  "$token"
+            if [[ $(( $filesize / $(ls -lL "$realpath" | awk '{print $5}') )) < 0.50 ]]; then
+                log "WARNING: Saved file is less than 50% of original!"
+            fi
             rm "$tmp"
         fi
     done
